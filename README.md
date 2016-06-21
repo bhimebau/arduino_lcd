@@ -12,6 +12,7 @@ TFT and Touch Screen Examples: Note that there are working example included in *
   * Problem 2: Create a program that generates the IU logo.
   * Problem 3: Create a program that allow you to move a rectangle to a location on the screen specified by the touch of a user. 
   * Problem 4: Extend your solution to Problem 3 by changing the color of the rectangle based on how hard the user is pressing on the screen. See the [TFTP Display Wiki Draw Circle](http://www.seeedstudio.com/wiki/2.8''_TFT_Touch_Shield_V2.0#drawCircle:) explanation for more information on how to generate specific colors. 
-  * Problem 5: Pong: Modify the following example code to create the
-    game pong - [TFT Pong](https://www.arduino.cc/en/Tutorial/TFTPong) You will need to use the touch display rather than
-    potentiometers as the controllers.
+  * Problem 5: Pong: Modify the provided pong example code to change the color of the ball after a collision with the paddle.
+  * Problem 6: Display a running count of the number of times that the ball has collided with the:
+     * paddle
+     * walls 
