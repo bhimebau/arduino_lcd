@@ -7,40 +7,17 @@
 #include <SPI.h>
 #include <SeeedTouchScreen.h> 
 
-//#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) // mega
-//#define YP A2   // must be an analog pin, use "An" notation!
-//#define XM A1   // must be an analog pin, use "An" notation!
-//#define YM 54   // can be a digital pin, this is A0
-//#define XP 57   // can be a digital pin, this is A3 
-
-//#elif defined(__AVR_ATmega32U4__) // leonardo
-//#define YP A2   // must be an analog pin, use "An" notation!
-//#define XM A1   // must be an analog pin, use "An" notation!
-//#define YM 18   // can be a digital pin, this is A0
-//#define XP 21   // can be a digital pin, this is A3 
-
-//#else //168, 328, something else
 #define YP A2   // must be an analog pin, use "An" notation!
 #define XM A1   // must be an analog pin, use "An" notation!
 #define YM 14   // can be a digital pin, this is A0
 #define XP 17   // can be a digital pin, this is A3 
-
-//#endif
-
-//Measured ADC values for (0,0) and (210-1,320-1)
-//TS_MINX corresponds to ADC value when X = 0
-//TS_MINY corresponds to ADC value when Y = 0
-//TS_MAXX corresponds to ADC value when X = 240 -1
-//TS_MAXY corresponds to ADC value when Y = 320 -1
 
 #define TS_MINX 116*2
 #define TS_MAXX 890*2
 #define TS_MINY 83*2
 #define TS_MAXY 913*2
 
-// For better pressure precision, we need to know the resistance
-// between X+ and X- Use any multimeter to read it
-// The 2.8" TFT Touch shield has 300 ohms across the X plate
+// Initialize the touch screen
 TouchScreen ts = TouchScreen(XP, YP, XM, YM);
 
 // variables for the position of the ball and paddle
@@ -60,9 +37,7 @@ void setup() {
   Tft.fillScreen(0,239,0,319,BLACK);                  // Fill the screen with all Black
                                                       // Lower left coordinate is (0,0) upper right coordinate is (239,319)
 }
-
 void loop() {
-
   // save the width and height of the screen
   int myWidth = 320;
   int myHeight = 240;
@@ -84,8 +59,8 @@ void loop() {
     Tft.fillRectangle(paddleX, paddleY, 20, 5, WHITE);  // Draw the new paddle location
     oldPaddleX = paddleX;
     oldPaddleY = paddleY;
- }
-   Tft.fillRectangle(paddleX, paddleY, 20, 5, WHITE);  // Draw the new paddle location 
+  }
+  Tft.fillRectangle(paddleX, paddleY, 20, 5, WHITE);  // Draw the new paddle location 
 
   // update the ball's position and draw it on screen
   if (millis() % ballSpeed < 2) {
