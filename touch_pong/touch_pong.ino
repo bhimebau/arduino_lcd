@@ -1,32 +1,53 @@
 /*
-
- TFT Pong
-
- This example for the Arduino screen reads the values
- of 2 potentiometers to move a rectangular platform
- on the x and y axes. The platform can intersect
- with a ball causing it to bounce.
-
- This example code is in the public domain.
-
- Created by Tom Igoe December 2012
- Modified 15 April 2013 by Scott Fitzgerald
-
- http://www.arduino.cc/en/Tutorial/TFTPong
-
+ Modified version of TFT pong for the TFTV2 display from seed studios. This version uses the touch display to determine the position of the paddle. 
  */
 
 #include <stdint.h>
 #include <TFTv2.h>
 #include <SPI.h>
+#include <SeeedTouchScreen.h> 
 
-// TFT TFTscreen = TFT(cs, dc, rst);
+//#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) // mega
+//#define YP A2   // must be an analog pin, use "An" notation!
+//#define XM A1   // must be an analog pin, use "An" notation!
+//#define YM 54   // can be a digital pin, this is A0
+//#define XP 57   // can be a digital pin, this is A3 
+
+//#elif defined(__AVR_ATmega32U4__) // leonardo
+//#define YP A2   // must be an analog pin, use "An" notation!
+//#define XM A1   // must be an analog pin, use "An" notation!
+//#define YM 18   // can be a digital pin, this is A0
+//#define XP 21   // can be a digital pin, this is A3 
+
+//#else //168, 328, something else
+#define YP A2   // must be an analog pin, use "An" notation!
+#define XM A1   // must be an analog pin, use "An" notation!
+#define YM 14   // can be a digital pin, this is A0
+#define XP 17   // can be a digital pin, this is A3 
+
+//#endif
+
+//Measured ADC values for (0,0) and (210-1,320-1)
+//TS_MINX corresponds to ADC value when X = 0
+//TS_MINY corresponds to ADC value when Y = 0
+//TS_MAXX corresponds to ADC value when X = 240 -1
+//TS_MAXY corresponds to ADC value when Y = 320 -1
+
+#define TS_MINX 116*2
+#define TS_MAXX 890*2
+#define TS_MINY 83*2
+#define TS_MAXY 913*2
+
+// For better pressure precision, we need to know the resistance
+// between X+ and X- Use any multimeter to read it
+// The 2.8" TFT Touch shield has 300 ohms across the X plate
+TouchScreen ts = TouchScreen(XP, YP, XM, YM);
 
 // variables for the position of the ball and paddle
-int paddleX = 0;
-int paddleY = 0;
-int oldPaddleX = 0;
-int oldPaddleY = 0;
+int paddleX = 120;
+int paddleY = 170;
+int oldPaddleX = 120;
+int oldPaddleY = 170;
 int ballDirectionX = 1;
 int ballDirectionY = 1;
 int ballSpeed = 10; // lower numbers are faster
@@ -47,23 +68,24 @@ void loop() {
   int myHeight = 240;
 
   // map the paddle's location to the position of the potentiometers
-  // paddleX = map(analogRead(A0), 512, -512, 0, myWidth) - 20 / 2;
-  // paddleY = map(analogRead(A1), 512, -512, 0, myHeight) - 5 / 2;
-
-  paddleX = 50;
-  paddleY = 10;
-
+  Point p = ts.getPoint();  
+  if (p.z > __PRESURE){
+    paddleX = map(p.x, TS_MINX, TS_MAXX, 0, 240);
+    paddleY = map(p.y, TS_MINY, TS_MAXY, 0, 320);
+  }
+  else {
+    paddleX = oldPaddleX;
+    paddleY = oldPaddleY; 
+  }
   // set the fill color to black and erase the previous
   // position of the paddle if different from present
-  if (oldPaddleX != paddleX || oldPaddleY != paddleY) {
+  if ((oldPaddleX != paddleX) || (oldPaddleY != paddleY)) {
     Tft.fillRectangle(oldPaddleX, oldPaddleY, 20, 5, BLACK);  // Erase the previous paddle position
-  }
-  
-  // draw the paddle on screen, save the current position
-  // as the previous.
-  Tft.fillRectangle(oldPaddleX, oldPaddleY, 20, 5, WHITE);  // Draw the new paddle location
-  oldPaddleX = paddleX;
-  oldPaddleY = paddleY;
+    Tft.fillRectangle(paddleX, paddleY, 20, 5, WHITE);  // Draw the new paddle location
+    oldPaddleX = paddleX;
+    oldPaddleY = paddleY;
+ }
+   Tft.fillRectangle(paddleX, paddleY, 20, 5, WHITE);  // Draw the new paddle location 
 
   // update the ball's position and draw it on screen
   if (millis() % ballSpeed < 2) {
@@ -82,7 +104,7 @@ void moveBall() {
   }
   // check if the ball and the paddle occupy the same space on screen
   if (inPaddle(ballX, ballY, paddleX, paddleY, 20, 5)) {
-    ballDirectionX = -ballDirectionX;
+    ballDirectionX = ballDirectionX;
     ballDirectionY = -ballDirectionY;
   }
   // update the ball's position
