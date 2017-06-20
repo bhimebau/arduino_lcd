@@ -1,7 +1,7 @@
 # TFT Display
 The [TFTP Display Wiki](http://www.seeedstudio.com/wiki/2.8%27%27_TFT_Touch_Shield_v2.0) provides a great deal of background information on the display/touch screen. 
 
-Libraries - download as zip files and copy to your Arduino/libraries Folder (see wiki above for additional detail). *Once the library files are copyed, you will need to restart the Arduino IDE for the files to be recognized.* 
+Libraries - download as zip files and copy to your Arduino/libraries Folder (see wiki above for additional detail). *Once the library files are copied, you will need to restart the Arduino IDE for the files to be recognized.* 
   * [Display](https://github.com/Seeed-Studio/TFT_Touch_Shield_V2)
   * [Touch Screen](https://github.com/Seeed-Studio/Touch_Screen_Driver)
  
